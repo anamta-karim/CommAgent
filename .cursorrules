@@ -1,0 +1,40 @@
+# CommAgent — Cursor/Copilot Rules
+
+Read STATE.md first, always — it has full architecture, stack, and current
+progress checklist. This file is just coding conventions.
+
+## Non-negotiables
+- Do NOT change track, architecture, or tech stack. Time is the constraint,
+  not the idea. If something in the stack seems hard, find the fastest
+  correct implementation — don't swap the approach.
+- The self-critique step MUST remain a distinct LLM call/graph node, separate
+  from the draft step. This is the project's entire differentiator — never
+  collapse them to save an API call.
+- Keep every function small and single-purpose. This is a time-boxed build;
+  debuggability > cleverness.
+
+## Backend (Python/FastAPI)
+- Match existing code style in the file you're editing before introducing new
+  patterns.
+- Every external call (Notion, Telegram, Claude, Resend) goes through its own
+  file in `integrations/` — never inline API calls in `agent/` or `main.py`.
+- Log every agent step (retrieve/draft/critique/decide) to a place the
+  frontend `/logs` endpoint can read — this trail IS the demo.
+- Fail loud in dev (raise/print full errors), fail soft in the Telegram-facing
+  path (never let a raw exception reach the user's chat).
+
+## Frontend (Next.js)
+- Keep the dashboard to one page: live reasoning trail, polling `/api/logs`.
+  No auth, no extra pages — not worth the time.
+- Plain, readable UI over polished — function over form given the deadline.
+
+## Env vars (never hardcode)
+NOTION_API_KEY, TELEGRAM_BOT_TOKEN, ANTHROPIC_API_KEY, RESEND_API_KEY (if used)
+
+## When stuck / low on time
+- Ship the happy path first (KB has the answer -> confident -> posts).
+- Then the escalation path (KB doesn't have it -> not confident -> escalates).
+  This second path IS the demo's money-shot — don't skip it under time
+  pressure even if polish suffers elsewhere.
+- Update STATE.md's "Current status" checklist as each step completes, so any
+  assistant picking this up mid-build knows exactly where things stand.

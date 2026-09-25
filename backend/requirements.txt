@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+notion-client
+chromadb
+sentence-transformers
+langgraph
+anthropic
+python-telegram-bot
+python-dotenv
