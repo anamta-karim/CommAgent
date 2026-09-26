@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@swytchcode/runtime": "^1.1.6"
+  }
+}

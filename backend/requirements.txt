@@ -1,9 +1,7 @@
 fastapi
-uvicorn
-notion-client
-chromadb
-sentence-transformers
+uvicorn[standard]
 langgraph
-anthropic
-python-telegram-bot
+langchain-anthropic
+chromadb
+swytchcode-runtime
 python-dotenv
