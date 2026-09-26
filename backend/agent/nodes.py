@@ -10,6 +10,19 @@ def _text(content) -> str:
         return "".join(part if isinstance(part, str) else part.get("text", "") for part in content)
     return content
 
+_HEDGE_PHRASES = [
+    "does not mention",
+    "does not contain",
+    "not mentioned",
+    "no information",
+    "i don't know",
+    "i do not know",
+    "cannot find",
+    "couldn't find",
+    "not provided",
+    "not specified",
+]
+
 def retrieve(state: dict) -> dict:
     state["chunks"] = kb.query(state["question"])
     return state
@@ -28,6 +41,13 @@ def critique(state: dict) -> dict:
     )
     verdict = _text(resp.content)
     state["confident"] = verdict.strip().upper().startswith("Y")
+
+    # Safety net: force escalation if the draft itself hedges,
+    # regardless of what the critique call decided.
+    draft_lower = state["draft_answer"].lower()
+    if any(phrase in draft_lower for phrase in _HEDGE_PHRASES):
+        state["confident"] = False
+
     return state
 
 def decide(state: dict) -> dict:
